@@ -38,7 +38,7 @@ jobs:
         id: run-tests
         run: npm run test
       - name: Upload test report
-        if: failure() && steps.run-tests.outcome == 'failure' #run this if run-tests steps fails
+        if: failure() && steps.run-tests.outcome == 'failure'
         uses: actions/upload-artifact@v3
         with:
           name: test-report
@@ -70,15 +70,21 @@ jobs:
     needs: build
     uses: ./.github/workflows/reusable.yml
     with:
-        artifact-name: dist-files
+      artifact-name: dist-files
     # secrets:
-        # some-secret: ${{ secrets.some-secret }}
+      # some-secret: ${{ secrets.some-secret }}
+  print-deploy-result:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print deploy output
+        run: echo "${{ needs.deploy.outputs.result }}"
   report:
-    needs: [lint, deploy] #delay execution of the job until the other jobs finished.
+    needs: [lint, deploy]
     if: failure()
     runs-on: ubuntu-latest
     steps:
       - name: Output information
-        run: |
+        run: | 
           echo "Something went wrong"
-          echo "${{ github }}"
+          echo "${{ toJSON(github) }}"
