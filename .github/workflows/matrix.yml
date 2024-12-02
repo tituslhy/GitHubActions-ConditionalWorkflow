@@ -2,11 +2,17 @@ name: Matrix Demo
 on: push
 jobs:
     build:
-        continue-on-error: true
+        continue-on-error: true #ensures that all jobs continue to run instead of being cancelled when one combination has an error
         strategy: 
             matrix:
                 node-version: [12, 14, 16]
                 operating-system: [ubuntu-latest, windows-latest]
+                include: #test this specific combination specifically
+                    - node-version: 18
+                      operating-system: ubuntu-latest
+                exclude:
+                    - node-version: 12
+                    - operating-system: windows-latest
         runs-on: ${{ matrix.operating-system }}
         steps:
             - name: Get Code
